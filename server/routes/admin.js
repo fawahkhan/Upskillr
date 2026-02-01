@@ -1,6 +1,8 @@
 const {Router} = require ("express")
 
 const adminRouter = Router()
+//importing admin model which will share admin data
+const {adminModel} = require('../db')
 
 adminRouter.post("/signup" , function(req,res){
     res.json({
