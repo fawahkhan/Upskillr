@@ -13,7 +13,7 @@ courseRouter.post('/purchase', function(req,res){
 //to view all courses
 courseRouter.get('/preview', function(req,res){
     res.json({
-        courses
+        msg:"hello from course preview"
     })
 })
 
