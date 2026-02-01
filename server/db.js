@@ -1,7 +1,6 @@
 const mongoose = require ("mongoose")
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.ObjectId ;
-mongoose.connect("mongodb+srv://fawahkhan:Fawah123@cluster0.qxcpijc.mongodb.net/UpSkillr")
 
 
 const User = new Schema({
