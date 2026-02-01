@@ -1,30 +1,23 @@
-const express = require ("express")
+const {Router} = require ("express")
 
-const app = express()
+const courseRouter = Router();
 
-function createUserRoutes(app){
-    app.post('/user/signup', function(req,res){
-        const name = req.body.name ;
-        const password = req.body.password ;
-        const email = req.body.email ;
-        res.json({
-            msg: "Signed up"
-        })
+
+//to buy a cours
+courseRouter.post('/course/purchase', function(req,res){
+    //you wouuld expect the user to pay money here.
+    res.json({
+        msg:"Bought the course"
     })
-    app.post('/user/signin', function(req,res){
-        res.json({
-            msg:"User login"
-        })
+})
+//to view all courses
+courseRouter.get('/course/preview', function(req,res){
+    res.json({
+        courses
     })
+})
 
-    app.get('/user/purchases', function(req,res){
-        res.json({
-            PurchasedCourses
-        })
-    })
-}
 
-module.exports= {
-    createUserRoutes: createUserRoutes
-
+module.exports = {
+    courseRouter: courseRouter 
 }
