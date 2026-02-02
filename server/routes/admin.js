@@ -5,6 +5,10 @@ const adminRouter = Router()
 const {adminModel} = require('../db')
 
 adminRouter.post("/signup" , function(req,res){
+    //check in the schema what properties are we dendingg to the db , just fetch those properties from the body
+    const {email, password, firstName, lastname} = req.body   //adding zod validation is left 
+// hash the password using bcrypt so that plain password is not stored in he db
+
     res.json({
         msg: "Admin signed in"
     })

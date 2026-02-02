@@ -6,9 +6,9 @@ const { adminRouter } = require("./routes/admin");
 const mongoose = require('mongoose');
 const app = express()
 
-app.use("/user", userRouter)
-app.use("/course", courseRouter)
-app.use("admin" , adminRouter)
+app.use("/api/v1/user", userRouter)
+app.use("/api/v1/course", courseRouter)
+app.use("/api/v1admin" , adminRouter)
 async function main(){
     await mongoose.connect(process.env.MONGO_URL)
     app.listen(3000)
