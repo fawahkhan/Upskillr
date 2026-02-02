@@ -1,14 +1,24 @@
+const bcrypt = require("bcrypt")
 const {Router} = require ("express")
-
+const express = require ("express")
 const adminRouter = Router()
 //importing admin model which will share admin data
-const {adminModel} = require('../db')
+const {AdminModel} = require('../db') 
+adminRouter.use(express.json())
 
-adminRouter.post("/signup" , function(req,res){
-    //check in the schema what properties are we dendingg to the db , just fetch those properties from the body
+adminRouter.post("/signup" , async function(req,res){
+    //check in the schema what properties are we sendingg to the db , just fetch those properties from the body
     const {email, password, firstName, lastname} = req.body   //adding zod validation is left 
-// hash the password using bcrypt so that plain password is not stored in he db
-
+    // hash the password using bcrypt so that plain password is not stored in he db
+    const hashedPassword = await bcrypt.hash(password, 5) 
+    
+    //store in db
+    await AdminModel.create({
+        email: email ,
+        password: hashedPassword, //rather than storing the password directly here we will be storingg the hashed password created by bcrypt.
+        firstName : firstName, 
+        lastname: lastname
+    })
     res.json({
         msg: "Admin signed in"
     })
