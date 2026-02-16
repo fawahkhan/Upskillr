@@ -1,5 +1,8 @@
 const bcrypt = require("bcrypt")
 const {Router} = require ("express")
+const jwt = require ("jsonwebtoken")
+const { JWT_ADMIN_PASSWORD } = require ("../config")  //for signing admins
+
 const adminRouter = Router()
 //importing admin model which will share admin data
 const {AdminModel} = require('../db') 
@@ -28,10 +31,27 @@ adminRouter.post("/signup" , async function(req,res){
     }
     
 })
-adminRouter.post("/signin" , function(req,res){
-    res.json({
-        msg: "Admin signed in"
+adminRouter.post("/signin" ,async function(req,res){
+    const { email, password} = req.body ;  //fetch email and password
+    
+    const admin = await AdminModel.findOne({  // hit the database and search for the one user
+        email,
     })
+    const matchedPassword = await bcrypt.compare(password , admin.password)
+    if(matchedPassword){
+        const token = jwt.sign({
+            id : admin._id //_id field is unique in db for every user thus we are signing this
+        },JWT_ADMIN_PASSWORD)
+        
+        //for token based authhentication , if cokkie based auth then do cookie logic
+        res.json({
+        token: token
+        })
+    }else{
+        res.status(403).json({
+            msg: "Incorrect credentials"
+        })
+    }
 })
 
 // to create a post

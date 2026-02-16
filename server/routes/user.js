@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt")
 const {Router} = require ("express")
+const jwt = require ("jsonwebtoken")
+const { JWT_USER_PASSWORD } = require ("../config") //for signing users , admin passwords would be signed by their own passwords which is different
 
 const userRouter = Router();
 const {UserModel} = require('../db') 
@@ -26,10 +28,28 @@ userRouter.post('/signup', async function(req,res){
     }
     
 })
-userRouter.post('/signin', function(req,res){
-    res.json({
-        msg:"User login"
+userRouter.post('/signin',async function(req,res){
+    const { email , password} = req.body ;  //fetch email and password
+    
+    const user = await UserModel.findOne({  // hit the database and search for the one user
+        email,
     })
+    const passwordMatch = await bcrypt.compare( password, user.password) //compare the password sent in the body with the hashed password stored in the db using bcrypt compare function which returns a boolean value
+    if(passwordMatch){
+        const token = jwt.sign({
+            id : user._id //_id field is unique in db for every user thus we are signing this
+        },JWT_USER_PASSWORD)
+        
+        //for token based authhentication , if cokkie based auth then do cookie logic
+        res.json({
+        token: token
+        })
+    }else{
+        res.status(403).json({
+            msg: "Incorrect credentials"
+        })
+    }
+    
 })
 userRouter.get('/purchases', function(req,res){
     res.json({
