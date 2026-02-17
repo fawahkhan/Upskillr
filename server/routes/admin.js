@@ -5,7 +5,8 @@ const { JWT_ADMIN_PASSWORD } = require ("../config")  //for signing admins
 
 const adminRouter = Router()
 //importing admin model which will share admin data
-const {AdminModel} = require('../db') 
+const {AdminModel, CourseModel} = require('../db') 
+const { adminMiddleware } = require("../middleware/admin")
 
 adminRouter.post("/signup" , async function(req,res){
     try  {
@@ -54,10 +55,22 @@ adminRouter.post("/signin" ,async function(req,res){
     }
 })
 
-// to create a post
-adminRouter.post("/course" , function(req,res){
+// to create a post we have to make sure that the admin is logged in .
+adminRouter.post("/course" , adminMiddleware, async function(req,res){
+    const admin_ID = req.adminID
+
+    const {title , description , image_url , price} = req.body;
+
+    const course = await CourseModel.create({
+        title,
+        description , 
+        image_url , 
+        price , 
+        creatorID: admin_ID
+    })
     res.json({
-        msg: "This is to create a course "
+        msg: "Course created" ,
+        courseID : course._id
     })
 })
 
