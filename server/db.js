@@ -1,7 +1,6 @@
 const mongoose = require ("mongoose")
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.ObjectId ;
-mongoose.connect(process.env.MONGO_URL)   //it means that connecting to the db on db.js is also as important  
 
 const User = new Schema({
     email:{type:String, unique:true}  ,//this will ensure two entries with the same email doesnt hit the server.
