@@ -20,7 +20,7 @@ adminRouter.post("/signup" , async function(req,res){
             email: email ,
             password: hashedPassword, //rather than storing the password directly here we will be storingg the hashed password created by bcrypt.
             firstName : firstName, 
-            lastname: lastname
+            lastname: lastname,
         })
         res.json({
             msg: "Admin signed in"
@@ -66,7 +66,7 @@ adminRouter.post("/course" , adminMiddleware, async function(req,res){
         description , 
         image_url , 
         price , 
-        creatorID: admin_ID
+        creatorId: admin_ID
     })
     res.json({
         msg: "Course created" ,
@@ -83,16 +83,16 @@ adminRouter.put("/course" ,adminMiddleware ,async function(req,res){
     const course = await CourseModel.updateOne({
         //filters - which row do you want to change, what course id?
         _id: courseID,
-        creatorID: admin_ID //whi course update rna jisme both id and creator id belongs to the same person.
+        creatorId: admin_ID //whi course update rna jisme both id and creator id belongs to the same person.
     },{
-        title,
-        description , 
-        image_url ,   
-        price , 
+        title: title,
+        description: description , 
+        image_url: image_url ,   
+        price: price
     })
     res.json({
         msg: "Course updated" ,
-        courseID : course._id
+        courseID : courseID
     })
 })
 // to get all the courses
@@ -100,7 +100,7 @@ adminRouter.get("/course/bulk" , adminMiddleware, async function(req,res){
     const admin_ID =  req.adminID
     const courses = await CourseModel.find({
 // we will be able to see all the courses of this creator
-        creatorID: admin_ID 
+        creatorId: admin_ID 
     })
     res.json({
         msg: "These are all the courses" ,
