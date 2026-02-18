@@ -75,15 +75,36 @@ adminRouter.post("/course" , adminMiddleware, async function(req,res){
 })
 
 // to edit a course or its price
-adminRouter.put("/course" , function(req,res){
+adminRouter.put("/course" ,adminMiddleware ,async function(req,res){
+    const admin_ID =  req.adminID
+
+    const {title , description , image_url , price, courseID} = req.body;
+    //updateOne accepts filters , updates and options as parameters 
+    const course = await CourseModel.updateOne({
+        //filters - which row do you want to change, what course id?
+        _id: courseID,
+        creatorID: admin_ID //whi course update rna jisme both id and creator id belongs to the same person.
+    },{
+        title,
+        description , 
+        image_url ,   
+        price , 
+    })
     res.json({
-        msg: "Admin signed in"
+        msg: "Course updated" ,
+        courseID : course._id
     })
 })
 // to get all the courses
-adminRouter.get("/course/bulk" , function(req,res){
+adminRouter.get("/course/bulk" , adminMiddleware, async function(req,res){
+    const admin_ID =  req.adminID
+    const courses = await CourseModel.find({
+// we will be able to see all the courses of this creator
+        creatorID: admin_ID 
+    })
     res.json({
-        msg: "Admin signed in"
+        msg: "These are all the courses" ,
+        courses 
     })
 })
 

@@ -7,7 +7,8 @@ function adminMiddleware(req , res , next){
 
     if (decoded ){
         // when we encoded in signin of admin , an id field was created we will be using this key called id in our middlewares
-        req.adminID = decoded.id  
+        req.adminID = decoded.id 
+        next()
     }else{
         res.status(403).json({
             msg : "YOU are not signed in"
