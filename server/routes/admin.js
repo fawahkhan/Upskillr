@@ -11,7 +11,7 @@ const { adminMiddleware } = require("../middleware/admin")
 adminRouter.post("/signup" , async function(req,res){
     try  {
         //check in the schema what properties are we sendingg to the db , just fetch those properties from the body
-        const {email, password, firstName, lastname} = req.body   //adding zod validation is left 
+        const {email, password, firstName, lastName} = req.body   //adding zod validation is left 
         // hash the password using bcrypt so that plain password is not stored in he db
         const hashedPassword = await bcrypt.hash(password, 5) 
         
@@ -20,7 +20,7 @@ adminRouter.post("/signup" , async function(req,res){
             email: email ,
             password: hashedPassword, //rather than storing the password directly here we will be storingg the hashed password created by bcrypt.
             firstName : firstName, 
-            lastname: lastname,
+            lastName: lastName,
         })
         res.json({
             msg: "Admin signed in"

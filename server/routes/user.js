@@ -4,18 +4,19 @@ const jwt = require ("jsonwebtoken")
 const { JWT_USER_PASSWORD } = require ("../config") //for signing users , admin passwords would be signed by their own passwords which is different
 
 const userRouter = Router();
-const {UserModel} = require('../db') 
+const {UserModel, PurchasesModel} = require('../db'); 
+const { userMiddleware } = require("../middleware/user");
 
 userRouter.post('/signup', async function(req,res){
     try {
-        const {email, password, firstName, lastname} = req.body    //adding zod validation is left 
+        const {email, password, firstName, lastName} = req.body    //adding zod validation is left 
         const hashedPassword = await bcrypt.hash(password, 5) 
           
         await UserModel.create({
         email: email ,
         password: hashedPassword, //rather than storing the password directly here we will be storingg the hashed password created by bcrypt.
         firstName : firstName, 
-        lastname: lastname
+        lastName: lastName
         })
 
         res.json({
@@ -51,7 +52,11 @@ userRouter.post('/signin',async function(req,res){
     }
     
 })
-userRouter.get('/purchases', function(req,res){
+userRouter.get('/purchases', userMiddleware, async function(req,res){
+    const userId = req.userID 
+    const PurchasedCourses = await PurchasesModel.find({
+        userId,
+    })
     res.json({
         PurchasedCourses
     })
