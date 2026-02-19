@@ -4,7 +4,7 @@ const jwt = require ("jsonwebtoken")
 const { JWT_USER_PASSWORD } = require ("../config") //for signing users , admin passwords would be signed by their own passwords which is different
 
 const userRouter = Router();
-const {UserModel, PurchasesModel} = require('../db'); 
+const {UserModel, PurchasesModel, CourseModel} = require('../db'); 
 const { userMiddleware } = require("../middleware/user");
 
 userRouter.post('/signup', async function(req,res){
@@ -57,8 +57,12 @@ userRouter.get('/purchases', userMiddleware, async function(req,res){
     const PurchasedCourses = await PurchasesModel.find({
         userId,
     })
+    const courseData = await CourseModel.find({
+        _id: { $in: PurchasedCourses.map( x=> x.courseId )}
+    })
     res.json({
-        PurchasedCourses
+        PurchasedCourses,
+        courseData
     })
 })
 
