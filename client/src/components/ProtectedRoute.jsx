@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={adminOnly ? '/instructor/login' : '/login'} replace />;
   }
 
   if (adminOnly && !isAdmin) {
