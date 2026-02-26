@@ -9,56 +9,57 @@ const { userMiddleware } = require("../middleware/user");
 
 userRouter.post('/signup', async function(req,res){
     try {
-        const {email, password, firstName, lastName} = req.body    //adding zod validation is left 
-        const hashedPassword = await bcrypt.hash(password, 5) 
-          
+        const {email, password, firstName, lastName} = req.body
+        const hashedPassword = await bcrypt.hash(password, 5)
+
         await UserModel.create({
-        email: email ,
-        password: hashedPassword, //rather than storing the password directly here we will be storingg the hashed password created by bcrypt.
-        firstName : firstName, 
-        lastName: lastName
+            email: email,
+            password: hashedPassword,
+            firstName: firstName,
+            lastName: lastName
         })
 
+        const savedUser = await UserModel.findOne({ email })
+        const token = jwt.sign({ id: savedUser._id }, JWT_USER_PASSWORD)
+
         res.json({
-        msg: "User Signed up successfully"
-    })
-    }catch(e){
+            msg: "User Signed up successfully",
+            token,
+            user: { _id: savedUser._id, email: savedUser.email, firstName: savedUser.firstName, lastName: savedUser.lastName }
+        })
+    } catch(e) {
         res.status(500).json({
             msg: "ERROR while signup"
         })
     }
-    
 })
-userRouter.post('/signin',async function(req,res){
-    const { email , password} = req.body ;  //fetch email and password
-    
-    const user = await UserModel.findOne({  // hit the database and search for the one user
-        email,
-    })
-    const passwordMatch = await bcrypt.compare( password, user.password) //compare the password sent in the body with the hashed password stored in the db using bcrypt compare function which returns a boolean value
-    if(passwordMatch){
+
+userRouter.post('/signin', async function(req,res){
+    const { email, password } = req.body;
+
+    const user = await UserModel.findOne({ email })
+    const passwordMatch = await bcrypt.compare(password, user.password) //compare the password sent in the body with the hashed password stored in the db using bcrypt compare function which returns a boolean value
+    if (passwordMatch) {
         const token = jwt.sign({
-            id : user._id //_id field is unique in db for every user thus we are signing this
-        },JWT_USER_PASSWORD)
-        
-        //for token based authhentication , if cokkie based auth then do cookie logic
+            id: user._id
+        }, JWT_USER_PASSWORD)
+
         res.json({
-        token: token
+            token,
+            user: { _id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName }
         })
-    }else{
+    } else {
         res.status(403).json({
             msg: "Incorrect credentials"
         })
     }
-    
 })
+
 userRouter.get('/purchases', userMiddleware, async function(req,res){
-    const userId = req.userID 
-    const PurchasedCourses = await PurchasesModel.find({
-        userId,
-    })
+    const userId = req.userID
+    const PurchasedCourses = await PurchasesModel.find({ userId })
     const courseData = await CourseModel.find({
-        _id: { $in: PurchasedCourses.map( x=> x.courseId )}
+        _id: { $in: PurchasedCourses.map(x => x.courseId) }
     })
     res.json({
         PurchasedCourses,
@@ -66,7 +67,6 @@ userRouter.get('/purchases', userMiddleware, async function(req,res){
     })
 })
 
-
-module.exports= {
+module.exports = {
     userRouter: userRouter
 }
