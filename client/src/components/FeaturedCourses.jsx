@@ -1,10 +1,14 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CourseCard from './CourseCard';
 import { CourseCardSkeleton, ErrorState } from './common/LoadingStates';
 import { coursesAPI } from '../api/apiClient';
+import { useAuth } from '../context/AuthContext';
 
 const FeaturedCourses = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,14 +31,12 @@ const FeaturedCourses = () => {
     fetchCourses();
   }, []);
 
-  const handleEnroll = async (courseId) => {
-    try {
-      await coursesAPI.purchase(courseId);
-      // Handle success (e.g., show toast, redirect to course)
-      console.log('Enrolled successfully');
-    } catch (error) {
-      console.error('Enrollment failed:', error);
-      throw error;
+  const visibleCourses = isAuthenticated ? courses : courses.slice(0, 6);
+  const hasMoreCourses = courses.length > visibleCourses.length;
+
+  const handleViewAllCourses = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/' } });
     }
   };
 
@@ -77,19 +79,18 @@ const FeaturedCourses = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {courses.map((course, index) => (
+            {visibleCourses.map((course, index) => (
               <CourseCard
                 key={course._id}
                 course={course}
                 index={index}
-                onEnroll={handleEnroll}
               />
             ))}
           </div>
         )}
 
         {/* View All Button */}
-        {!loading && !error && courses.length > 0 && (
+        {!loading && !error && hasMoreCourses && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -97,14 +98,18 @@ const FeaturedCourses = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-center mt-14"
           >
-            <motion.a
-              href="#all-courses"
+            <motion.button
+              type="button"
+              onClick={handleViewAllCourses}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center px-8 py-4 bg-white text-black rounded-xl font-medium hover:bg-black/5 transition-all duration-200 border border-black/20 shadow-sm hover:shadow-md hover:border-black/30"
             >
               View All Courses
-            </motion.a>
+            </motion.button>
+            {!isAuthenticated && (
+              <p className="mt-3 text-sm text-black/70">Sign in or sign up to view all courses.</p>
+            )}
           </motion.div>
         )}
       </div>

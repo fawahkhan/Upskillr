@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { coursesAPI } from '../api/apiClient';
 import CourseCard from '../components/CourseCard';
 import { CourseCardSkeleton, ErrorState, EmptyState } from '../components/common/LoadingStates';
-import { BookOpen } from 'lucide-react';
 
 const MyPurchases = () => {
   const [courses, setCourses] = useState([]);
@@ -49,14 +48,12 @@ const MyPurchases = () => {
             ))}
           </div>
         ) : error ? (
-          <ErrorState message={error} />
+          <ErrorState description={error} onRetry={() => window.location.reload()} />
         ) : courses.length === 0 ? (
           <EmptyState
-            icon={BookOpen}
             title="No courses yet"
             description="You haven't purchased any courses. Browse our catalog to get started!"
-            actionLabel="Browse Courses"
-            actionLink="/"
+            action={{ label: 'Browse Courses', onClick: () => window.location.href = '/' }}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
