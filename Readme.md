@@ -1,6 +1,6 @@
-# 🎓 UpSkillr — Learn. Teach. Grow.
+# 🎓 UpSkillr! Learn. Teach. Grow.
 
-UpSkillr is a project I built to explore what a **modern, student‑first learning platform** should feel like — simple, fast, and actually enjoyable to use.
+UpSkillr is a project I built to explore what a **modern, student‑first learning platform** should feel like simple, fast, and actually enjoyable to use.
 
 Instead of cluttered dashboards and confusing flows, the goal was to create something where:
 
@@ -22,7 +22,7 @@ This project is also part of my journey as a developer learning **MERN, authenti
 ✔ Real purchase flow with protected routes
 ✔ Smooth animations that make the app feel alive
 
-Most importantly — **the flows actually feel real**, not just CRUD pages stitched together.
+Most importantly **the flows actually feel real**, not just CRUD pages stitched together.
 
 ---
 
@@ -39,7 +39,7 @@ This video shows the complete lifecycle:
 
 ---
 
-## 👨‍🎓 Student Experience — Discover → Signup → Purchase
+## 👨‍🎓 Student Experience  Discover → Signup → Purchase
 
 A quick look at how a student interacts with the platform:
 
@@ -157,7 +157,7 @@ UpSkillr is that foundation.
 
 # 🤝 Contributions & Feedback
 
-If you have suggestions, ideas, or want to collaborate — feel free to open an issue or reach out.
+If you have suggestions, ideas, or want to collaborate feel free to open an issue or reach out.
 
 ---
 
