@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../api/apiClient';
+import { authAPI, adminAuthAPI } from '../api/apiClient';
 
 const AuthContext = createContext(null);
 
@@ -28,6 +28,20 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const adminSignin = async (credentials) => {
+    const data = await adminAuthAPI.signin(credentials);
+    const adminUser = { ...data.admin, role: 'admin' };
+    setUser(adminUser);
+    return data;
+  };
+
+  const adminSignup = async (adminData) => {
+    const data = await adminAuthAPI.signup(adminData);
+    const adminUser = { ...data.admin, role: 'admin' };
+    setUser(adminUser);
+    return data;
+  };
+
   const logout = () => {
     authAPI.logout();
     setUser(null);
@@ -38,6 +52,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     signin,
     signup,
+    adminSignin,
+    adminSignup,
     logout,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
