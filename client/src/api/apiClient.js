@@ -19,9 +19,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Response interceptor for error handling
@@ -64,8 +62,14 @@ export const authAPI = {
   },
 
   getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = localStorage.getItem('user');
+      if (!user || user === 'undefined' || user === 'null') return null;
+      return JSON.parse(user);
+    } catch {
+      localStorage.removeItem('user');
+      return null;
+    }
   },
 
   isAuthenticated: () => {
@@ -83,14 +87,14 @@ export const coursesAPI = {
 
   // Purchase a course
   purchase: async (courseId) => {
-    const response = await apiClient.post('/course/purchase', { courseId });
+    const response = await apiClient.post('/course/purchase', { courseID: courseId });
     return response.data;
   },
 
-  // Get user's purchased courses
+  // Get user's purchased courses — normalize to { courses: [...] }
   getPurchased: async () => {
     const response = await apiClient.get('/user/purchases');
-    return response.data;
+    return { courses: response.data.courseData || [] };
   },
 };
 
@@ -129,9 +133,9 @@ export const adminCoursesAPI = {
     return response.data;
   },
 
-  // Update a course
+  // Update a course — backend expects courseID (capital ID)
   update: async (courseId, courseData) => {
-    const response = await apiClient.put('/admin/course', { courseId, ...courseData });
+    const response = await apiClient.put('/admin/course', { courseID: courseId, ...courseData });
     return response.data;
   },
 };
